@@ -13,6 +13,19 @@ DO $$
         ('Stock9', 110),
         ('Stock10', 140);
 
+		-- Insert 10 records into 'clients' table
+        INSERT INTO clients (first_name, last_name, email, phone_number) VALUES
+        ('John', 'Doe', 'john.doe@example.com', '123-456-7890'),
+        ('Jane', 'Smith', 'jane.smith@example.com', '987-654-3210'),
+        ('Bob', 'Johnson', 'bob.johnson@example.com', '456-789-0123'),
+        ('Alice', 'Williams', 'alice.williams@example.com', '789-012-3456'),
+        ('Charlie', 'Davis', 'charlie.davis@example.com', '012-345-6789'),
+        ('Eva', 'Miller', 'eva.miller@example.com', '321-654-9870'),
+        ('David', 'Brown', 'david.brown@example.com', '654-987-0123'),
+        ('Grace', 'Anderson', 'grace.anderson@example.com', '987-012-3456'),
+        ('Henry', 'Moore', 'henry.moore@example.com', '011-345-6789'),
+        ('Olivia', 'White', 'olivia.white@example.com', '234-567-8901');
+
         -- Insert 10 records into 'stocks_historic' table
         INSERT INTO stocks_historic (stock_id, stock_value, complete_date) VALUES
         (1, 105, '2023-01-10'),
@@ -25,19 +38,6 @@ DO $$
         (8, 165, '2023-01-10'),
         (9, 115, '2023-01-10'),
         (10, 145, '2023-01-10');
-
-        -- Insert 10 records into 'clients' table
-        INSERT INTO clients (first_name, last_name, email, phone_number) VALUES
-        ('John', 'Doe', 'john.doe@example.com', '123-456-7890'),
-        ('Jane', 'Smith', 'jane.smith@example.com', '987-654-3210'),
-        ('Bob', 'Johnson', 'bob.johnson@example.com', '456-789-0123'),
-        ('Alice', 'Williams', 'alice.williams@example.com', '789-012-3456'),
-        ('Charlie', 'Davis', 'charlie.davis@example.com', '012-345-6789'),
-        ('Eva', 'Miller', 'eva.miller@example.com', '321-654-9870'),
-        ('David', 'Brown', 'david.brown@example.com', '654-987-0123'),
-        ('Grace', 'Anderson', 'grace.anderson@example.com', '987-012-3456'),
-        ('Henry', 'Moore', 'henry.moore@example.com', '011-345-6789'),
-        ('Olivia', 'White', 'olivia.white@example.com', '234-567-8901');
 
         -- Insert 10 records into 'options' table
         INSERT INTO options (stock_id, wallet_id, option_type, strike_price, expiration) VALUES
