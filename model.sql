@@ -45,17 +45,6 @@ DO $$
             CHECK (expiration >= NOW())
         );
 
-        CREATE TABLE IF NOT EXISTS actual_options (
-            id serial PRIMARY KEY,
-            stock_id int REFERENCES stocks(id) ON DELETE RESTRICT,
-            wallet_id int REFERENCES wallet(id) ON DELETE RESTRICT,
-            option_type varchar CHECK (option_type IN ('call','put')),
-            strike_price int NOT NULL,
-            expiration timestamp DEFAULT(NOW() + INTERVAL '1 day'),
-
-            CHECK (expiration >= NOW())
-        );
-
         CREATE TABLE IF NOT EXISTS expired_options (
             id serial PRIMARY KEY,
             stock_id int REFERENCES stocks(id) ON DELETE RESTRICT,
