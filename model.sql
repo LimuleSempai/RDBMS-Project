@@ -6,13 +6,18 @@ DO $$
         CREATE TABLE IF NOT EXISTS stocks (
             id serial PRIMARY KEY,
             stock_name varchar UNIQUE,
-            stock_value int
+            stock_value int,
+            complete_date date DEFAULT(CURRENT_DATE),
+            
+            CHECK (complete_date = CURRENT_DATE)
         );
 
         CREATE TABLE IF NOT EXISTS stocks_historic (
             stock_id int REFERENCES stocks(id),
             stock_value int,
-            complete_date timestamp NOT NULL
+            complete_date date NOT NULL,
+
+            UNIQUE (stock_id, complete_date)
         );
 
         CREATE TABLE IF NOT EXISTS clients (
