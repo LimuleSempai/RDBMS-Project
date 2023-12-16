@@ -73,7 +73,8 @@ BEGIN
         UPDATE wallet
         SET options_number = options_number - 1
         WHERE id = OLD.wallet_id;
-
+        INSERT INTO expired_options (stock_id, wallet_id, option_type, strike_price, expired_on) VALUES
+        (OLD.stock_id, OLD.wallet_id, OLD.option_type, OLD.strike_price, OLD.expiration);
         RETURN NEW;
     END IF;
     
