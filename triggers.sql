@@ -50,7 +50,7 @@ EXECUTE FUNCTION update_stock_historic();
 CREATE OR REPLACE FUNCTION prevent_option_deletion()
 RETURNS TRIGGER AS $$
 BEGIN
-    RAISE EXCEPTION 'Cannot delete this option';
+    RAISE EXCEPTION 'Cannot delete expired option';
     RETURN OLD;
 END;
 $$ LANGUAGE plpgsql;
@@ -61,9 +61,30 @@ BEFORE DELETE ON expired_options
 FOR EACH ROW
 EXECUTE FUNCTION prevent_option_deletion();
 
+-- Create a function to block deletion if expiration timestamp has not passed
+CREATE OR REPLACE FUNCTION prevent_delete_if_not_expired()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF OLD.expiration >= CURRENT_TIMESTAMP THEN
+        RAISE EXCEPTION 'Cannot delete option with expiration timestamp not passed.';
+        RETURN OLD;
+    ELSE
+         -- Subtract 1 from options_number in the corresponding wallet
+        UPDATE wallet
+        SET options_number = options_number - 1
+        WHERE id = OLD.wallet_id;
+
+        -- Delete the option
+        DELETE FROM options
+        WHERE id = OLD.id;
+        RETURN NEW;
+    END IF;
+    
+END;
+$$ LANGUAGE plpgsql;
+
 -- Create a trigger to execute the function before delete on options
 CREATE TRIGGER prevent_delete_if_not_expired_trigger
 BEFORE DELETE ON actual_options
 FOR EACH ROW
-IF OLD.expiration >= CURRENT_TIMESTAMP THEN
-EXECUTE FUNCTION prevent_option_deletion();
+EXECUTE FUNCTION prevent_delete_if_not_expired();
