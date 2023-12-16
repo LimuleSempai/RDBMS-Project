@@ -12,7 +12,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER update_wallet_actions_trigger
-AFTER INSERT ON options
+AFTER INSERT ON actual_options
 FOR EACH ROW
 EXECUTE FUNCTION update_wallet_actions();
 
@@ -74,9 +74,6 @@ BEGIN
         SET options_number = options_number - 1
         WHERE id = OLD.wallet_id;
 
-        -- Delete the option
-        DELETE FROM options
-        WHERE id = OLD.id;
         RETURN NEW;
     END IF;
     

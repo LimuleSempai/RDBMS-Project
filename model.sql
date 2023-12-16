@@ -53,6 +53,6 @@ DO $$
             strike_price int NOT NULL,
             expired_on timestamp ,
 
-            CHECK (expiration <= NOW())
+            CHECK (expired_on <= NOW())
         );
 END $$
