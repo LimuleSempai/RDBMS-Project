@@ -45,3 +45,25 @@ CREATE TRIGGER update_stock_historic_trigger
 AFTER INSERT OR UPDATE ON stocks
 FOR EACH ROW
 EXECUTE FUNCTION update_stock_historic();
+
+-- Create a function to prevent deletion of expired an option
+CREATE OR REPLACE FUNCTION prevent_option_deletion()
+RETURNS TRIGGER AS $$
+BEGIN
+    RAISE EXCEPTION 'Cannot delete this option';
+    RETURN OLD;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Create a trigger to execute the function before delete on options
+CREATE TRIGGER prevent_option_deletion_trigger
+BEFORE DELETE ON expired_options
+FOR EACH ROW
+EXECUTE FUNCTION prevent_option_deletion();
+
+-- Create a trigger to execute the function before delete on options
+CREATE TRIGGER prevent_delete_if_not_expired_trigger
+BEFORE DELETE ON actual_options
+FOR EACH ROW
+IF OLD.expiration >= CURRENT_TIMESTAMP THEN
+EXECUTE FUNCTION prevent_option_deletion();
