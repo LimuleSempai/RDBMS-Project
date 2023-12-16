@@ -5,7 +5,7 @@ CREATE OR REPLACE FUNCTION update_wallet_actions()
 RETURNS TRIGGER AS $$
 BEGIN
     UPDATE wallet
-    SET actions_number = actions_number + 1
+    SET actions_number = options_number + 1
     WHERE id = NEW.wallet_id;
     RETURN NEW;
 END;
