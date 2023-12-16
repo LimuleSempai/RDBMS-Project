@@ -40,7 +40,7 @@ DO $$
             wallet_id int REFERENCES wallet(id) ON DELETE RESTRICT,
             option_type varchar CHECK (option_type IN ('call','put')),
             strike_price int NOT NULL,
-            expiration timestamp DEFAULT(NOW() + '1 day')
+            expiration timestamp DEFAULT(NOW() + INTERVAL '1 day')
         );
 
 END $$
