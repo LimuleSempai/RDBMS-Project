@@ -67,17 +67,8 @@ RETURNS TRIGGER AS $$
 BEGIN
     IF OLD.expiration >= CURRENT_TIMESTAMP THEN
         RAISE EXCEPTION 'Cannot delete option with expiration timestamp not passed.';
-        RETURN OLD;
-    ELSE
-         -- Subtract 1 from options_number in the corresponding wallet
-        UPDATE wallet
-        SET options_number = options_number - 1
-        WHERE id = OLD.wallet_id;
-        INSERT INTO expired_options (stock_id, wallet_id, option_type, strike_price, expired_on) VALUES
-        (OLD.stock_id, OLD.wallet_id, OLD.option_type, OLD.strike_price, OLD.expiration);
-        RETURN NEW;
-    END IF;
-    
+    END IF;  
+    RETURN OLD;  
 END;
 $$ LANGUAGE plpgsql;
 
@@ -86,3 +77,23 @@ CREATE TRIGGER prevent_delete_if_not_expired_trigger
 BEFORE DELETE ON actual_options
 FOR EACH ROW
 EXECUTE FUNCTION prevent_delete_if_not_expired();
+
+CREATE OR REPLACE FUNCTION on_delete_if_expired()
+RETURNS TRIGGER AS $$
+BEGIN
+    -- Subtract 1 from options_number in the corresponding wallet
+    UPDATE wallet
+    SET options_number = options_number - 1
+    WHERE id = OLD.wallet_id;
+    -- Insert into expired_options the expired option
+    INSERT INTO expired_options (stock_id, wallet_id, option_type, strike_price, expired_on) VALUES
+    (OLD.stock_id, OLD.wallet_id, OLD.option_type, OLD.strike_price, OLD.expiration);
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Create a trigger to execute the function after delete on options
+CREATE TRIGGER delete_if_expired_trigger
+AFTER DELETE ON actual_options
+FOR EACH ROW
+EXECUTE FUNCTION on_delete_if_expired();
