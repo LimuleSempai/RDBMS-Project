@@ -18,15 +18,15 @@ DO $$
 
         -- Insert 10 records into 'stocks_historic' table
         INSERT INTO stocks_historic (stock_id, stock_value, complete_date) VALUES
-        (1, 105, '2023-01-01'),
-        (2, 155, '2023-01-02'),
-        (3, 205, '2023-01-03'),
-        (4, 125, '2023-01-04'),
-        (5, 185, '2023-01-05'),
-        (6, 95, '2023-01-06'),
-        (7, 135, '2023-01-07'),
-        (8, 165, '2023-01-08'),
-        (9, 115, '2023-01-09'),
+        (1, 105, '2023-01-10'),
+        (2, 155, '2023-01-10'),
+        (3, 205, '2023-01-10'),
+        (4, 125, '2023-01-10'),
+        (5, 185, '2023-01-10'),
+        (6, 95, '2023-01-10'),
+        (7, 135, '2023-01-10'),
+        (8, 165, '2023-01-10'),
+        (9, 115, '2023-01-10'),
         (10, 145, '2023-01-10');
 
         -- Insert 10 records into 'clients' table
@@ -39,7 +39,7 @@ DO $$
         ('Eva', 'Miller', 'eva.miller@example.com', '321-654-9870'),
         ('David', 'Brown', 'david.brown@example.com', '654-987-0123'),
         ('Grace', 'Anderson', 'grace.anderson@example.com', '987-012-3456'),
-        ('Henry', 'Moore', 'henry.moore@example.com', '012-345-6789'),
+        ('Henry', 'Moore', 'henry.moore@example.com', '011-345-6789'),
         ('Olivia', 'White', 'olivia.white@example.com', '234-567-8901');
 
         -- Insert 10 records into 'wallet' table
