@@ -1,8 +1,5 @@
-/* file containing the data and the test of the projects */
-
 DO $$
     BEGIN
-
         -- Insert 10 records into 'stocks' table
         INSERT INTO stocks (stock_name, stock_value) VALUES
         ('Stock1', 100),
@@ -42,19 +39,6 @@ DO $$
         ('Henry', 'Moore', 'henry.moore@example.com', '011-345-6789'),
         ('Olivia', 'White', 'olivia.white@example.com', '234-567-8901');
 
-        -- Insert 10 records into 'wallet' table
-        INSERT INTO wallet (client_id, actions_number) VALUES
-        (1, 5),
-        (2, 8),
-        (3, 12),
-        (4, 3),
-        (5, 7),
-        (6, 10),
-        (7, 2),
-        (8, 15),
-        (9, 6),
-        (10, 9);
-
         -- Insert 10 records into 'options' table
         INSERT INTO options (stock_id, wallet_id, option_type, strike_price, expiration) VALUES
         (1, 1, 'call', 110, '2023-01-15'),
@@ -68,4 +52,4 @@ DO $$
         (9, 9, 'call', 120, '2023-02-25'),
         (10, 10, 'put', 150, '2023-03-01');
 
-END $$
+END $$;

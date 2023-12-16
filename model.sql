@@ -31,7 +31,7 @@ DO $$
         CREATE TABLE IF NOT EXISTS wallet (
             id serial PRIMARY KEY,
             client_id int UNIQUE REFERENCES clients(id) ON DELETE RESTRICT,
-            actions_number int DEFAULT(0)
+            options_number int DEFAULT(0)
         );
 
         CREATE TABLE IF NOT EXISTS options (
