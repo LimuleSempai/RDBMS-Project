@@ -8,7 +8,7 @@ AS $$
 DECLARE
     wt numeric[];
 BEGIN
-    wt := ARRAY(SELECT ARRAY(SELECT SQRT(dt) * random() FROM generate_series(1, num_simulations)) FROM generate_series(1, num_steps));
+    wt := ARRAY(SELECT ARRAY(SELECT SQRT(dt) * ((random() * 2) - 1 ) FROM generate_series(1, num_simulations)) FROM generate_series(1, num_steps));
     result := wt;
 END;
 $$ LANGUAGE plpgsql;
