@@ -97,3 +97,79 @@ CREATE TRIGGER delete_if_expired_trigger
 AFTER DELETE ON actual_options
 FOR EACH ROW
 EXECUTE FUNCTION on_delete_if_expired();
+
+
+-- Trigers and stored procedures updates
+
+-- Create a trigger to update option prices when stock prices change
+CREATE OR REPLACE FUNCTION update_option_prices_on_stock_change()
+RETURNS TRIGGER AS $$
+BEGIN
+    UPDATE actual_options ao
+    SET monte_carlo_price = (
+        SELECT
+            monte_carlo_simulation(
+                NEW.stock_value,  -- Updated stock value
+                0.1,               -- mu (expected return)
+                0.2,               -- sigma (volatility)
+                EXTRACT(EPOCH FROM ao.expiration - CURRENT_TIMESTAMP) / 60 / 60 / 24 / 365,  -- T (time to expiration in years)
+                0.05,              -- r (risk-free rate)
+                1000,              -- num_simulations
+                252,               -- num_steps
+                ao.strike_price,   -- K
+                ao.option_type     -- option_type
+            )
+    )
+    WHERE ao.stock_id = NEW.id;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Create a trigger to execute the function after updating stock prices
+CREATE TRIGGER update_option_prices_trigger
+AFTER UPDATE ON stocks
+FOR EACH ROW
+EXECUTE FUNCTION update_option_prices_on_stock_change();
+
+
+-- Create a trigger to update option prices when client data changes
+CREATE OR REPLACE FUNCTION update_option_prices_on_client_change()
+RETURNS TRIGGER AS $$
+BEGIN
+    UPDATE actual_options ao
+    SET monte_carlo_price = (
+        SELECT
+            monte_carlo_simulation(
+                s.stock_value,  -- Current stock value
+                0.1,             -- mu (expected return)
+                0.2,             -- sigma (volatility)
+                EXTRACT(EPOCH FROM ao.expiration - CURRENT_TIMESTAMP) / 60 / 60 / 24 / 365,  -- T (time to expiration in years)
+                0.05,            -- r (risk-free rate)
+                1000,            -- num_simulations
+                252,             -- num_steps
+                ao.strike_price, -- K
+                ao.option_type   -- option_type
+            )
+        FROM stocks s
+        WHERE s.id = ao.stock_id
+    )
+    WHERE ao.wallet_id IN (SELECT id FROM wallet WHERE client_id = NEW.id);
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Create a trigger to execute the function after updating client data
+CREATE TRIGGER update_option_prices_on_client_change_trigger
+AFTER UPDATE ON clients
+FOR EACH ROW
+EXECUTE FUNCTION update_option_prices_on_client_change();
+
+
+-- Test cases
+-- Update stock price and check if option prices are updated
+UPDATE stocks SET stock_value = 150 WHERE id = 1;
+
+-- Update client data and check if option prices are updated
+UPDATE clients SET first_name = 'John' WHERE id = 1;
