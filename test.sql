@@ -57,3 +57,19 @@ DO $$
         (10, 10, 'put', 150, NOW() + INTERVAL '1 minute');
         
 END $$;
+
+-- Test for brownian_motion procedure
+DO $$ 
+DECLARE
+    num_simulations_test int := 1000;
+    num_steps_test int := 50;
+    dt_test numeric := 0.01;
+    result_test numeric[];
+BEGIN
+    CALL brownian_motion(num_simulations_test, num_steps_test, dt_test, result_test);
+
+    -- Display the result
+    RAISE NOTICE 'Brownian Motion Result: %', result_test;
+END;
+$$ LANGUAGE plpgsql;
+
