@@ -25,7 +25,8 @@ DO $$
             first_name varchar NOT NULL,
             last_name varchar NOT NULL,
             email varchar UNIQUE NOT NULL,
-            phone_number varchar UNIQUE NOT NULL
+            phone_number varchar UNIQUE NOT NULL,
+            risk_adversity int CHECK (risk_adversity IN (1,2,3,4,5))
         );
 
         CREATE TABLE IF NOT EXISTS wallet (
