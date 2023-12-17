@@ -1,45 +1,48 @@
-CREATE OR REPLACE FUNCTION calculate_black_scholes(
-    IN stock_price numeric,
-    IN strike_price numeric,
-    IN time_to_expiration numeric,
-    IN volatility numeric,
-    IN risk_free_rate numeric,
-    IN option_type varchar
+CREATE OR REPLACE PROCEDURE black_scholes_simulation(
+    S0 numeric,
+    K numeric,
+    T numeric,
+    r numeric,
+    sigma numeric,
+    option_type varchar,
+    OUT opt_price numeric
 )
-RETURNS TABLE (option_price numeric)
 AS $$
 DECLARE
     d1 numeric;
     d2 numeric;
 BEGIN
-    d1 := (ln(stock_price / strike_price) + (risk_free_rate + power(volatility, 2) / 2) * time_to_expiration) / (volatility * sqrt(time_to_expiration));
-    d2 := d1 - volatility * sqrt(time_to_expiration);
+    -- Calculate d1 and d2
+    d1 := (LN(S0 / K) + (r + POWER(sigma, 2) / 2) * T) / (sigma * SQRT(T));
+    d2 := d1 - sigma * SQRT(T);
 
     IF option_type = 'call' THEN
-        option_price := stock_price * cdf(d1) - strike_price * exp(-risk_free_rate * time_to_expiration) * cdf(d2);
+        -- Calculate call option price
+        opt_price := S0 * pg_normdist(d1) - K * EXP(-r * T) * pg_normdist(d2);
     ELSIF option_type = 'put' THEN
-        option_price := strike_price * exp(-risk_free_rate * time_to_expiration) * cdf(-d2) - stock_price * cdf(-d1);
+        -- Calculate put option price
+        opt_price := K * EXP(-r * T) * pg_normdist(-d2) - S0 * pg_normdist(-d1);
     ELSE
-        RAISE EXCEPTION 'Invalid option type. Use either ''call'' or ''put''.';
+        RAISE EXCEPTION 'Option type not recognized.';
     END IF;
 
-    RETURN NEXT;
-END
+    RETURN;
+END;
 $$ LANGUAGE plpgsql;
 
--- Create a simple test case
+
+-- Test case for the black_scholes_simulation procedure
 DO $$
 DECLARE
-    call_price numeric;
-    put_price numeric;
+    opt_price_call numeric;
+    opt_price_put numeric;
 BEGIN
-    -- Test with sample values
-    SELECT * INTO call_price FROM calculate_black_scholes(100, 100, 1, 0.2, 0.05, 'call');
-    SELECT * INTO put_price FROM calculate_black_scholes(100, 100, 1, 0.2, 0.05, 'put');
+    -- Example parameters
+    CALL black_scholes_simulation(100, 100, 1, 0.05, 0.2, 'call', opt_price_call);
+    CALL black_scholes_simulation(100, 100, 1, 0.05, 0.2, 'put', opt_price_put);
 
-    -- Display results
-    RAISE NOTICE 'Call Option Price: %', call_price;
-    RAISE NOTICE 'Put Option Price: %', put_price;
-END
+    -- Display the results
+    RAISE NOTICE 'Call Option Price: %', opt_price_call;
+    RAISE NOTICE 'Put Option Price: %', opt_price_put;
+END;
 $$;
-
