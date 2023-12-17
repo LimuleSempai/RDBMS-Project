@@ -8,7 +8,14 @@ AS $$
 DECLARE
     wt numeric[];
 BEGIN
-    wt := ARRAY(SELECT ARRAY(SELECT SQRT(dt) * ((random() * 2) - 1 ) FROM generate_series(1, num_simulations)) FROM generate_series(1, num_steps));
+    wt := ARRAY(SELECT ARRAY(SELECT 0 FROM generate_series(1, num_simulations)) FROM generate_series(1, num_steps));
+
+    FOR i IN 1..num_steps LOOP
+        FOR j IN 1..num_simulations LOOP
+            wt[i][j] := SQRT(dt) * ((random() * 2) - 1 );
+        END LOOP;
+    END LOOP; 
+
     result := wt;
 END;
 $$ LANGUAGE plpgsql;
