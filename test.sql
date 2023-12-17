@@ -118,5 +118,5 @@ DECLARE
     option_price numeric;
 BEGIN
     CALL monte_carlo_simulation(90, 0.06, 0.22, 1.8, 0.03, 1000, 150, 95, 'call', option_price);
-    RAISE NOTICE 'Test Case 5 - Call Option Price: %', option_price;$
+    RAISE NOTICE 'Test Case 5 - Call Option Price: %', option_price;
 END $$;
