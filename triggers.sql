@@ -98,7 +98,7 @@ AFTER DELETE ON actual_options
 FOR EACH ROW
 EXECUTE FUNCTION on_delete_if_expired();
 
-
+/*
 -- Trigers and stored procedures updates
 
 -- Create a trigger to update option prices when stock prices change
@@ -173,3 +173,4 @@ UPDATE stocks SET stock_value = 150 WHERE id = 1;
 
 -- Update client data and check if option prices are updated
 UPDATE clients SET first_name = 'John' WHERE id = 1;
+*/
