@@ -10,6 +10,7 @@ SELECT
     ao.expiration,
     ao.wallet_id,
     ao.id AS option_id
+    
 FROM
     actual_options ao
 JOIN
