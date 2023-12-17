@@ -120,3 +120,50 @@ BEGIN
     CALL monte_carlo_simulation(90, 0.06, 0.22, 1.8, 0.03, 1000, 150, 95, 'call', option_price);
     RAISE NOTICE 'Test Case 5 - Call Option Price: %', option_price;
 END $$;
+
+-- Test Case 1: Call option
+DO $$ 
+DECLARE 
+    opt_price numeric;
+BEGIN 
+    CALL black_scholes_simulation(100.0, 100.0, 1.0, 0.05, 0.2, 'call', opt_price);
+    RAISE NOTICE 'Test Case 1: Call option - Option Price: %', opt_price;
+END $$;
+
+-- Test Case 2: Put option
+DO $$ 
+DECLARE 
+    opt_price numeric;
+BEGIN 
+    CALL black_scholes_simulation(100.0, 100.0, 1.0, 0.05, 0.2, 'put', opt_price);
+    RAISE NOTICE 'Test Case 2: Put option - Option Price: %', opt_price;
+END $$;
+
+-- Test Case 3: Invalid option type
+DO $$ 
+BEGIN 
+    BEGIN
+        CALL black_scholes_simulation(100.0, 100.0, 1.0, 0.05, 0.2, 'invalid_type', NULL);
+    EXCEPTION
+        WHEN others THEN
+            RAISE NOTICE 'Test Case 3: Invalid option type - %', SQLERRM;
+    END;
+END $$;
+
+-- Test Case 4: Another Call option
+DO $$ 
+DECLARE 
+    opt_price numeric;
+BEGIN 
+    CALL black_scholes_simulation(120.0, 100.0, 2.0, 0.1, 0.3, 'call', opt_price);
+    RAISE NOTICE 'Test Case 4: Another Call option - Option Price: %', opt_price;
+END $$;
+
+-- Test Case 5: Another Put option
+DO $$ 
+DECLARE 
+    opt_price numeric;
+BEGIN 
+    CALL black_scholes_simulation(80.0, 100.0, 0.5, 0.03, 0.25, 'put', opt_price);
+    RAISE NOTICE 'Test Case 5: Another Put option - Option Price: %', opt_price;
+END $$;
