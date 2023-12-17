@@ -13,7 +13,7 @@ DO $$
         );
 
         CREATE TABLE IF NOT EXISTS stocks_historic (
-            stock_id int REFERENCES stocks(id),
+            stock_id int REFERENCES stocks(id) ON UPDATE RESTRICT ON DELETE CASCADE,
             stock_value int,
             complete_date date NOT NULL,
 
