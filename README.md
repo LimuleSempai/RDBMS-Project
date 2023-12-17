@@ -23,14 +23,13 @@ look inside the test.sql file and put the right test at each step.
 
 How to get an array (solved 1)
 
-Difference between sql and python for monte carlo implementation :
-especially for randomness and calculation capacity (sql has more trouble with large amounts of data)
-
 Monte carlo, 1 row random appears in arrays (solved 2)
 
 You can't enter an array in a variable in a loop. (solved 3)
 
 Black schole, need extension for some functions (solved 4)
+
+Show ERD in readme.md (solved 5)
 
 
 ## How we solved them
@@ -43,7 +42,12 @@ Black schole, need extension for some functions (solved 4)
 
 4. Create my own.
 
+5. Get it to PNG
+
 ## Known issues
+
+Difference between sql and python for monte carlo implementation :
+especially for randomness and calculation capacity (sql has more trouble with large amounts of data)
 
 ## Fails
 
