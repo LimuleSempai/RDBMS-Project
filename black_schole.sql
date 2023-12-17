@@ -1,3 +1,25 @@
+CREATE OR REPLACE PROCEDURE home_made_cdf(
+  d numeric,
+  OUT n numeric
+)
+AS $$
+DECLARE
+    s numeric;
+    t numeric;
+    y numeric;
+BEGIN
+    s := 1.0 / (1.0 + 0.2316419 * ABS(d));
+    t := s * (0.319381530 + s * (-0.356563782 + s * (1.781477937 + s * (-1.821255978 + 1.330274429 * s))));
+    y := exp(-0.5 * d^2) / 2.506628274631;
+
+    IF d > 0 THEN
+        n := 1.0 - y * t;
+    ELSE
+        n := y * t;
+    END IF;
+END;
+$$ LANGUAGE plpgsql;
+
 CREATE OR REPLACE PROCEDURE black_scholes_simulation(
     S0 numeric,
     K numeric,
@@ -11,38 +33,30 @@ AS $$
 DECLARE
     d1 numeric;
     d2 numeric;
+    n1 numeric;
+    n2 numeric;
 BEGIN
     -- Calculate d1 and d2
     d1 := (LN(S0 / K) + (r + POWER(sigma, 2) / 2) * T) / (sigma * SQRT(T));
     d2 := d1 - sigma * SQRT(T);
 
     IF option_type = 'call' THEN
+        CALL home_made_cdf(d1, n1);
+        CALL home_made_cdf(d2, n2);
         -- Calculate call option price
-        opt_price := S0 * pg_normdist(d1) - K * EXP(-r * T) * pg_normdist(d2);
+        opt_price := S0 * n1 - K * EXP(-r * T) * n2;
+
     ELSIF option_type = 'put' THEN
+        CALL home_made_cdf(-d1, n1);
+        CALL home_made_cdf(-d2, n2);
         -- Calculate put option price
-        opt_price := K * EXP(-r * T) * pg_normdist(-d2) - S0 * pg_normdist(-d1);
+        opt_price := K * EXP(-r * T) * n2 - S0 * n1;
+
     ELSE
         RAISE EXCEPTION 'Option type not recognized.';
+
     END IF;
 
     RETURN;
 END;
 $$ LANGUAGE plpgsql;
-
-
--- Test case for the black_scholes_simulation procedure
-DO $$
-DECLARE
-    opt_price_call numeric;
-    opt_price_put numeric;
-BEGIN
-    -- Example parameters
-    CALL black_scholes_simulation(100, 100, 1, 0.05, 0.2, 'call', opt_price_call);
-    CALL black_scholes_simulation(100, 100, 1, 0.05, 0.2, 'put', opt_price_put);
-
-    -- Display the results
-    RAISE NOTICE 'Call Option Price: %', opt_price_call;
-    RAISE NOTICE 'Put Option Price: %', opt_price_put;
-END;
-$$;
