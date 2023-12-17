@@ -31,24 +31,27 @@ DO $$
 
         CREATE TABLE IF NOT EXISTS wallet (
             id serial PRIMARY KEY,
-            client_id int UNIQUE REFERENCES clients(id) ON DELETE RESTRICT,
+            client_id int UNIQUE REFERENCES clients(id) ON DELETE RESTRICT 0N UPDATE RESTRICT,
             options_number int DEFAULT(0)
         );
 
         CREATE TABLE IF NOT EXISTS actual_options (
             id serial PRIMARY KEY,
-            stock_id int REFERENCES stocks(id) ON DELETE RESTRICT,
+            stock_id int REFERENCES stocks(id) ON UPDATE RESTRICT ON DELETE RESTRICT,
             wallet_id int REFERENCES wallet(id) ON DELETE RESTRICT,
             option_type varchar CHECK (option_type IN ('call','put')),
             strike_price int NOT NULL,
             expiration timestamp DEFAULT(NOW() + INTERVAL '1 day'),
+            risk_free numeric,
+            monte_carlo_price numeric DEFAULT(0),
+            black_schole_price numeric DEFAULT(0)
 
             CHECK (expiration >= NOW())
         );
 
         CREATE TABLE IF NOT EXISTS expired_options (
             id serial PRIMARY KEY,
-            stock_id int REFERENCES stocks(id) ON DELETE RESTRICT,
+            stock_id int REFERENCES stocks(id) ON UPDATE RESTRICT ON DELETE RESTRICT,
             wallet_id int REFERENCES wallet(id) ON DELETE RESTRICT,
             option_type varchar CHECK (option_type IN ('call','put')),
             strike_price int NOT NULL,

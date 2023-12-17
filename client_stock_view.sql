@@ -9,8 +9,10 @@ SELECT
     ao.strike_price,
     ao.expiration,
     ao.wallet_id,
-    ao.id AS option_id
-    
+    ao.id AS option_id,
+    ao.monte_carlo_price,
+    ao.black_schole_price
+
 FROM
     actual_options ao
 JOIN
