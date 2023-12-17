@@ -12,6 +12,10 @@ Find the instruction [here](project.pdf)
 
 How to get an array
 
+Difference entre sql et python pour l'implementation de monte carlo :
+notamment pour le random et la capacité de calcul (sql a plus de mal avec les grosse quantité de données)
+
+
 ## How we solved them
 
 ## Known issues
