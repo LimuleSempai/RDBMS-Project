@@ -47,9 +47,9 @@ BEGIN
     
     FOR t IN 2..num_steps+1 LOOP
         FOR i IN 1..num_simulations LOOP
-    	    price_paths_array[t][i] := (price_paths_array[t-1][i] * EXP((mu - 0.5 * sigma^2) * dt + sigma * W_t_array[t-1][i]));
+    	    price_paths_array[t][i] := (price_paths_array[t-1][i] * EXP((mu - (0.5 * sigma^2)) * dt + sigma * W_t_array[t-1][i]));
         END LOOP;
-    END LOOP;
+    END LOOP;   
     
     IF option_type = 'call' THEN
         -- Calculate payoffs for call option
