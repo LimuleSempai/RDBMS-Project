@@ -73,3 +73,50 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+
+-- Test for monte carlo simulation procedure
+
+-- Test Case 1
+DO $$ 
+DECLARE
+    option_price numeric;
+BEGIN
+    CALL monte_carlo_simulation(100, 0.05, 0.2, 1, 0.03, 1000, 100, 110, 'call', option_price);
+    RAISE NOTICE 'Test Case 1 - Call Option Price: %', option_price;
+END $$;
+
+-- Test Case 2
+DO $$ 
+DECLARE
+    option_price numeric;
+BEGIN
+    CALL monte_carlo_simulation(50, 0.03, 0.15, 0.5, 0.02, 800, 50, 45, 'put', option_price);
+    RAISE NOTICE 'Test Case 2 - Put Option Price: %', option_price;
+END $$;
+
+-- Test Case 3
+DO $$ 
+DECLARE
+    option_price numeric;
+BEGIN
+    CALL monte_carlo_simulation(120, 0.07, 0.25, 2, 0.04, 1200, 80, 130, 'call', option_price);
+    RAISE NOTICE 'Test Case 3 - Call Option Price: %', option_price;
+END $$;
+
+-- Test Case 4
+DO $$ 
+DECLARE
+    option_price numeric;
+BEGIN
+    CALL monte_carlo_simulation(80, 0.04, 0.18, 1.5, 0.035, 1500, 120, 75, 'put', option_price);
+    RAISE NOTICE 'Test Case 4 - Put Option Price: %', option_price;
+END $$;
+
+-- Test Case 5
+DO $$ 
+DECLARE
+    option_price numeric;
+BEGIN
+    CALL monte_carlo_simulation(90, 0.06, 0.22, 1.8, 0.03, 1000, 150, 95, 'call', option_price);
+    RAISE NOTICE 'Test Case 5 - Call Option Price: %', option_price;$
+END $$;
