@@ -74,7 +74,8 @@ END;
 $$ LANGUAGE plpgsql;
 
 
--- Test for monte carlo simulation procedure
+-- Test for monte carlo simulation procedure 
+-- Work but different result compared to the pytho code
 
 -- Test Case 1
 DO $$ 
