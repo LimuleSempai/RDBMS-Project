@@ -40,17 +40,17 @@ DO $$
         (10, 145, '2023-01-10');
 
         -- Insert 10 records into 'options' table
-        INSERT INTO actual_options (stock_id, wallet_id, option_type, strike_price) VALUES
-        (1, 1, 'call', 110),
-        (2, 2, 'put', 160),
-        (3, 3, 'call', 21),
-        (4, 4, 'put', 130),
-        (5, 5, 'call', 180),
-        (6, 6, 'put', 100),
-        (7, 7, 'call', 140),
-        (8, 8, 'put', 170),
-        (9, 9, 'call', 120),
-        (10, 10, 'put', 150);
+        INSERT INTO actual_options (stock_id, wallet_id, option_type, strike_price, risk_free) VALUES
+        (1, 1, 'call', 110, 0.05),
+        (2, 2, 'put', 160, 0.03),
+        (3, 3, 'call', 21, 0.1),
+        (4, 4, 'put', 130, 0.05),
+        (5, 5, 'call', 180, 0.05),
+        (6, 6, 'put', 100, 0.45),
+        (7, 7, 'call', 140, 0.55),
+        (8, 8, 'put', 170, 0.01),
+        (9, 9, 'call', 120, 0.05),
+        (10, 10, 'put', 150, 0.95);
 
         INSERT INTO actual_options (stock_id, wallet_id, option_type, strike_price, expiration) VALUES
         (9, 9, 'call', 120, NOW() + INTERVAL '1 minute'),

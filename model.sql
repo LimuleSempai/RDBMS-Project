@@ -13,7 +13,7 @@ DO $$
         );
 
         CREATE TABLE IF NOT EXISTS stocks_historic (
-            stock_id int REFERENCES stocks(id) ON UPDATE RESTRICT ON DELETE CASCADE,
+            stock_id int REFERENCES stocks(id) ON UPDATE RESTRICT,
             stock_value int,
             complete_date date NOT NULL,
 
@@ -31,7 +31,7 @@ DO $$
 
         CREATE TABLE IF NOT EXISTS wallet (
             id serial PRIMARY KEY,
-            client_id int UNIQUE REFERENCES clients(id) ON DELETE RESTRICT 0N UPDATE RESTRICT,
+            client_id int UNIQUE REFERENCES clients(id) ON UPDATE RESTRICT ON DELETE RESTRICT ,
             options_number int DEFAULT(0)
         );
 
