@@ -98,9 +98,8 @@ AFTER DELETE ON actual_options
 FOR EACH ROW
 EXECUTE FUNCTION on_delete_if_expired();
 
-/*
-marche pas encore
-CREATE OR REPLACE FUNCTION calcul_option_price()
+
+CREATE OR REPLACE FUNCTION insert_calcul_option_price()
 RETURNS TRIGGER AS $$
 DECLARE
     opt_price numeric;
@@ -110,23 +109,57 @@ DECLARE
     sigma numeric;
     T numeric;
 BEGIN
+    
     S0 := (SELECT stock_value FROM stocks WHERE stocks.id = NEW.stock_id);
     mu := (SELECT AVG(stock_value) FROM stocks_historic sh WHERE sh.stock_id = NEW.stock_id);
     sigma := (SELECT stddev(stock_value) FROM stocks_historic sh WHERE sh.stock_id = NEW.stock_id);
     T := (EXTRACT(EPOCH from (NEW.expiration - NOW())) / 3600 / 24 / 252); 
-    
+        
     CALL monte_carlo_simulation(S0, mu, sigma, T, NEW.risk_free, 100, 100, NEW.strike_price, NEW.option_type, opt_price);
     UPDATE actual_options SET monte_carlo_price = opt_price WHERE id = NEW.id;
-
     CALL black_scholes_simulation(S0, NEW.strike_price,  T, NEW.risk_free,  sigma,  NEW.option_type, opt_price2);
     UPDATE actual_options SET black_schole_price = opt_price2 WHERE id = NEW.id;
-
+    
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER calcul_price_option
-AFTER INSERT OR UPDATE ON actual_options
+CREATE TRIGGER _insert_calcul_price_option
+AFTER INSERT ON actual_options
 FOR EACH ROW
-EXECUTE FUNCTION calcul_option_price();
+EXECUTE FUNCTION insert_calcul_option_price();
+
+/*
+CREATE OR REPLACE FUNCTION update_calcul_option_price()
+RETURNS TRIGGER AS $$
+DECLARE
+    opt_price numeric;
+    opt_price2 numeric;
+    S0 numeric;
+    mu numeric;
+    sigma numeric;
+    T numeric;
+BEGIN
+    
+    S0 := (SELECT stock_value FROM stocks WHERE stocks.id = NEW.stock_id);
+    mu := (SELECT AVG(stock_value) FROM stocks_historic sh WHERE sh.stock_id = NEW.stock_id);
+    sigma := (SELECT stddev(stock_value) FROM stocks_historic sh WHERE sh.stock_id = NEW.stock_id);
+    T := (EXTRACT(EPOCH from (NEW.expiration - NOW())) / 3600 / 24 / 252); 
+
+    IF OLD.monte_carlo_price = NEW.monte_carlo_price THEN
+        CALL monte_carlo_simulation(S0, mu, sigma, T, NEW.risk_free, 100, 100, NEW.strike_price, NEW.option_type, opt_price);
+        UPDATE actual_options SET monte_carlo_price = opt_price WHERE id = NEW.id;
+    ELSIF  OLD.black_schole_price = NEW.black_schole_price THEN
+        CALL black_scholes_simulation(S0, NEW.strike_price,  T, NEW.risk_free,  sigma,  NEW.option_type, opt_price2);
+        UPDATE actual_options SET black_schole_price = opt_price2 WHERE id = NEW.id;
+    END IF;
+    
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER _update_calcul_option_price
+AFTER UPDATE ON actual_options
+FOR EACH ROW
+EXECUTE FUNCTION update_calcul_option_price();
 */
